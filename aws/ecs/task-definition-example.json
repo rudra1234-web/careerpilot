@@ -1,0 +1,29 @@
+{
+  "family": "careerpilot-question-service",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<acct>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<acct>:role/careerpilotTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "question-service",
+      "image": "<acct>.dkr.ecr.us-east-1.amazonaws.com/careerpilot/question-service:latest",
+      "portMappings": [{ "containerPort": 8082 }],
+      "environment": [
+        { "name": "SPRING_DATA_MONGODB_URI", "value": "mongodb://<docdb-endpoint>:27017/careerpilot" },
+        { "name": "SPRING_KAFKA_BOOTSTRAP_SERVERS", "value": "<msk-bootstrap>" },
+        { "name": "AWS_REGION", "value": "us-east-1" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/careerpilot",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "question-service"
+        }
+      }
+    }
+  ]
+}

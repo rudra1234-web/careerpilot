@@ -1,0 +1,38 @@
+<section class="practice">
+  <h2>Mock interview</h2>
+  <p class="sub" style="margin-bottom:1.5rem">Answer as you would out loud — your AI coach scores it like a real interviewer.
+    Your session is kept while you navigate around the app.</p>
+
+  <!-- Session setup -->
+  <div class="card" *ngIf="s.questions.length === 0">
+    <h3>New session</h3>
+    <p class="sub">Pick a topic; questions are tailored to your resume and target role
+      ({{ targetRole }}).</p>
+
+    <div class="field">
+      <label>Core categories</label>
+      <div class="chips">
+        <button type="button" class="chip choice"
+                *ngFor="let c of coreCategories"
+                [class.active]="s.category === c.id"
+                (click)="select(c.id)">{{ c.label }}</button>
+      </div>
+    </div>
+
+    <div class="field" *ngIf="resumeSkills.length">
+      <label>From your resume</label>
+      <div class="chips">
+        <button type="button" class="chip choice"
+                *ngFor="let sk of resumeSkills"
+                [class.active]="s.category === sk"
+                (click)="select(sk)">{{ sk }}</button>
+      </div>
+    </div>
+
+    <p class="sub" *ngIf="!resumeSkills.length" style="font-size:.85rem">
+      Tip: upload your resume on the dashboard and your own skills appear here as practice topics.
+    </p>
+
+    <button class="btn" (click)="start()" [disabled]="s.loading">
+      <span class="spinner" *ngIf="s.loading"></span>
+      {{ s.loading ? 'Generating questions…' : 'S

@@ -1,0 +1,27 @@
+# Build output
+backend/*/target/
+frontend/careerpilot-ui/dist/
+frontend/careerpilot-ui/.angular/
+frontend/careerpilot-ui/node_modules/
+frontend/careerpilot-ui/node_modules_old*/
+
+# Runtime artifacts
+logs/
+resume-uploads/
+*.log
+
+# Diagnostic scratch files (created during setup; safe to delete)
+claude-*.bat
+*.txt
+!frontend/careerpilot-ui/src/**/*.txt
+rsp*.tmp
+TestPg.java
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+Thumbs.db
+desktop.ini

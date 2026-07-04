@@ -1,0 +1,55 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "CareerPilot Progress Actions", "version": "1.0.0" },
+  "paths": {
+    "/api/progress/{userId}/weak-areas": {
+      "get": {
+        "operationId": "getWeakAreas",
+        "description": "Get the user's weak areas sorted worst-first",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true,
+            "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of weak areas",
+            "content": { "application/json": { "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tag": { "type": "string" },
+                  "category": { "type": "string" },
+                  "avgScore": { "type": "number" },
+                  "attempts": { "type": "integer" }
+                }
+              }
+            } } }
+          }
+        }
+      }
+    },
+    "/api/questions/generate": {
+      "post": {
+        "operationId": "generateQuestions",
+        "description": "Generate a new tailored question set for the user",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": {
+            "type": "object",
+            "properties": {
+              "userId": { "type": "string" },
+              "targetRole": { "type": "string" },
+              "skills": { "type": "string" },
+              "category": { "type": "string",
+                "enum": ["DSA","SYSTEM_DESIGN","JAVA","SPRING","BEHAVIORAL"] },
+              "count": { "type": "integer" }
+            },
+            "required": ["userId","category","count"]
+          } } }
+        },
+        "responses": { "200": { "description": "Generated questions" } }
+      }
+    }
+  }
+}
