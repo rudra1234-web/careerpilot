@@ -10,6 +10,25 @@ import { AuthService } from '../../core/auth.service';
   imports: [CommonModule],
   template: `
     <section class="hero" style="text-align:center;padding:4rem 2rem">
+      <div class="logo-hero">
+        <svg viewBox="0 0 64 64" width="72" height="72" aria-label="CareerPilot logo">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="16" fill="url(#lg)"/>
+          <g transform="rotate(-32 32 32)">
+            <path fill="#ffffff" d="M12 34 L52 22 L24 44 L24 37 L40 27 L20 36 Z"/>
+            <path fill="#c7d2fe" d="M24 44 L24 37 L30 39 Z"/>
+          </g>
+          <g stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round" opacity=".85">
+            <line x1="10" y1="48" x2="20" y2="48"/>
+            <line x1="8" y1="54" x2="24" y2="54"/>
+          </g>
+        </svg>
+      </div>
       <span class="eyebrow">AI-powered interview preparation</span>
       <h1 style="font-size:2.6rem">Practice like it's the real interview.<br>Improve like you have a coach.</h1>
       <p style="margin:0 auto;max-width:620px">

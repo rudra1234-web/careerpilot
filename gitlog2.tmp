@@ -1,0 +1,15 @@
+[master 96c184e] Add question bank, analytics, JD targeting, timer+voice, onboarding, rate limiting, landing page, Dockerfiles
+ 27 files changed, 1215 insertions(+), 33 deletions(-)
+ create mode 100644 backend/api-gateway/Dockerfile
+ create mode 100644 backend/progress-service/Dockerfile
+ create mode 100644 backend/question-service/Dockerfile
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/UsageLimiter.java
+ create mode 100644 backend/resume-service/Dockerfile
+ create mode 100644 backend/user-service/Dockerfile
+ create mode 100644 docker-compose.full.yml
+ create mode 100644 frontend/careerpilot-ui/src/app/core/auth.guard.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/core/toast.service.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/features/landing/landing.component.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/features/question-bank/question-bank.component.ts
+96c184e Add question bank, analytics, JD targeting, timer+voice, onboarding, rate limiting, landing page, Dockerfiles
+cf6ae0b CareerPilot: AI interview prep platform - microservices + Angular + Keycloak + Kafka

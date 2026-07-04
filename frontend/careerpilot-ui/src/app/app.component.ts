@@ -12,7 +12,18 @@ import { ToastService } from './core/toast.service';
     <nav class="navbar">
       <div class="navbar-inner">
         <a routerLink="/" class="brand">
-          <span class="brand-mark">CP</span>
+          <span class="brand-mark">
+            <svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+              <g transform="rotate(-32 32 32)">
+                <path fill="#ffffff" d="M12 34 L52 22 L24 44 L24 37 L40 27 L20 36 Z"/>
+                <path fill="#c7d2fe" d="M24 44 L24 37 L30 39 Z"/>
+              </g>
+              <g stroke="#a5b4fc" stroke-width="3" stroke-linecap="round" opacity=".85">
+                <line x1="10" y1="48" x2="20" y2="48"/>
+                <line x1="8" y1="55" x2="24" y2="55"/>
+              </g>
+            </svg>
+          </span>
           CareerPilot
         </a>
         <div class="nav-links" *ngIf="auth.loggedIn">
