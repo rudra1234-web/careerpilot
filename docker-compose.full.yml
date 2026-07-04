@@ -1,0 +1,105 @@
+# =====================================================================
+# Full-stack compose: infra + all five services in containers.
+# Reference for demos/deployment: `mvn package` each service first, then
+#   docker compose -f docker-compose.full.yml up --build
+#
+# NOTE on networking: inside the compose network, services reach
+# dependencies by service name (postgres, mongo, kafka, keycloak) - the
+# environment overrides below rewrite the localhost defaults from each
+# application.yml. Keycloak issuer validation requires the token 'iss'
+# to match; KC_HOSTNAME is pinned so browser and services agree.
+# =====================================================================
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: careerpilot
+      POSTGRES_PASSWORD: careerpilot
+      POSTGRES_DB: careerpilot
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: [mongodata:/data/db]
+
+  kafka:
+    image: bitnamilegacy/kafka:3.7
+    ports: ["9092:9092"]
+    environment:
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start-dev --hostname-url=http://localhost:8180
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports: ["8180:8080"]
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    ports: ["9411:9411"]
+
+  api-gateway:
+    build: ./backend/api-gateway
+    ports: ["8080:8080"]
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://user-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://question-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://resume-service:8083
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://progress-service:8084
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on: [keycloak, user-service, question-service, resume-service, progress-service]
+
+  user-service:
+    build: ./backend/user-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/careerpilot
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on: [postgres, kafka, keycloak]
+
+  question-service:
+    build: ./backend/question-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/careerpilot
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      AI_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on: [mongo, kafka, keycloak]
+
+  resume-service:
+    build: ./backend/resume-service
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      AI_API_KEY: ${ANTHROPIC_API_KEY}
+      RESUME_STORAGE_DIR: /data/resumes
+    volumes: [resumedata:/data/resumes]
+    depends_on: [kafka, keycloak]
+
+  progress-service:
+    build: ./backend/progress-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/careerpilot
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      AI_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on: [mongo, kafka, keycloak]
+
+volumes:
+  pgdata:
+  mongodata:
+  resumedata:

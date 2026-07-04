@@ -13,10 +13,16 @@ public class QuestionController {
     private final QuestionGenerationService generationService;
     private final AnswerFeedbackService feedbackService;
     private final InterviewQuestionRepository repository;
+    private final UsageLimiter usageLimiter;
 
-    /** Generate tailored questions from resume skills + target role. */
+    /**
+     * Generate tailored questions from resume skills + target role.
+     * Optionally targets the gap between the resume and a pasted job description.
+     * Guarded by a per-user daily quota (429 when exhausted).
+     */
     @PostMapping("/generate")
     public List<InterviewQuestion> generate(@RequestBody GenerateRequest request) {
+        usageLimiter.checkAndCount(request.userId());
         return generationService.generate(request);
     }
 
@@ -39,6 +45,18 @@ public class QuestionController {
         return repository.findByUserIdAndAnsweredAtNotNullOrderByAnsweredAtDesc(userId);
     }
 
+    /** Question bank: everything ever generated for this user, newest first. */
+    @GetMapping("/bank")
+    public List<InterviewQuestion> bank(@RequestParam String userId) {
+        return repository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    /** Remaining generation quota for today (for the UI). */
+    @GetMapping("/quota")
+    public Map<String, Object> quota(@RequestParam String userId) {
+        return usageLimiter.status(userId);
+    }
+
     public record GenerateRequest(String userId, String targetRole, String skills,
-                                  String category, int count) {}
+                                  String category, int count, String jobDescription) {}
 }

@@ -41,7 +41,8 @@ public class ProfileUpdatedListener {
                     (String) event.getOrDefault("targetRole", "Senior Software Engineer"),
                     (String) event.get("skills"),
                     "DSA",
-                    5);
+                    5,
+                    null);
             var questions = generationService.generate(request);
 
             kafkaTemplate.send("questions.generated", userId, Map.of(

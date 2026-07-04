@@ -15,7 +15,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         clientId: 'careerpilot-ui',
       },
       initOptions: {
-        onLoad: 'login-required',
+        onLoad: 'check-sso',   // public landing page; app routes use authGuard
         checkLoginIframe: false,
       },
       enableBearerInterceptor: true,

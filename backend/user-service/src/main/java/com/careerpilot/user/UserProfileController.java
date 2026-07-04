@@ -50,4 +50,28 @@ public class UserProfileController {
         profile.setSkills(incoming.getSkills());
         return repository.save(profile);
     }
+
+    /**
+     * Onboarding/preferences: sets target role, experience and company type
+     * WITHOUT touching resume-extracted skills or identity fields.
+     */
+    @PatchMapping("/me/preferences")
+    public UserProfile preferences(@AuthenticationPrincipal Jwt jwt,
+                                   @RequestBody PreferencesRequest req) {
+        UserProfile profile = repository.findByKeycloakSub(jwt.getSubject())
+                .orElseGet(() -> UserProfile.builder().keycloakSub(jwt.getSubject()).build());
+        if (req.targetRole() != null && !req.targetRole().isBlank()) {
+            profile.setTargetRole(req.targetRole());
+        }
+        if (req.targetCompanyType() != null && !req.targetCompanyType().isBlank()) {
+            profile.setTargetCompanyType(req.targetCompanyType());
+        }
+        if (req.yearsOfExperience() != null) {
+            profile.setYearsOfExperience(req.yearsOfExperience());
+        }
+        return repository.save(profile);
+    }
+
+    public record PreferencesRequest(String targetRole, String targetCompanyType,
+                                     Integer yearsOfExperience) {}
 }

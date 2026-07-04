@@ -42,9 +42,9 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   generateQuestions(userId: string, targetRole: string, skills: string,
-                    category: string, count = 5): Observable<InterviewQuestion[]> {
+                    category: string, count = 5, jobDescription = ''): Observable<InterviewQuestion[]> {
     return this.http.post<InterviewQuestion[]>(`${this.base}/questions/generate`,
-      { userId, targetRole, skills, category, count });
+      { userId, targetRole, skills, category, count, jobDescription });
   }
 
   submitAnswer(questionId: string, answer: string): Observable<AnswerFeedback> {
@@ -72,11 +72,30 @@ export class ApiService {
   myProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.base}/users/me`);
   }
+
+  /** Onboarding preferences: never touches skills or identity. */
+  savePreferences(prefs: { targetRole?: string; targetCompanyType?: string;
+                           yearsOfExperience?: number }): Observable<UserProfile> {
+    return this.http.patch<UserProfile>(`${this.base}/users/me/preferences`, prefs);
+  }
+
+  /** Every question ever generated for this user, newest first. */
+  bank(userId: string): Observable<AnsweredQuestion[]> {
+    return this.http.get<AnsweredQuestion[]>(`${this.base}/questions/bank?userId=${userId}`);
+  }
+
+  /** Remaining daily generation quota. */
+  quota(userId: string): Observable<{ limit: number; used: number; remaining: number }> {
+    return this.http.get<{ limit: number; used: number; remaining: number }>(
+      `${this.base}/questions/quota?userId=${userId}`);
+  }
 }
 
 export interface UserProfile {
   fullName?: string;
   email?: string;
   targetRole?: string;
+  targetCompanyType?: string;
+  yearsOfExperience?: number;
   skills?: string;   // comma-separated, extracted from the resume
 }

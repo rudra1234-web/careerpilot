@@ -1,2 +1,184 @@
 === git === 
 Initialized empty Git repository in C:/Users/DELL/careerpilot/.git/
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aws/bedrock-agent/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aws/bedrock-agent/action-group-schema.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aws/ecs/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aws/ecs/task-definition-example.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aws/keycloak-realm.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/api-gateway/pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/api-gateway/src/main/java/com/careerpilot/gateway/ApiGatewayApplication.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/api-gateway/src/main/java/com/careerpilot/gateway/SecurityConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/api-gateway/src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/AiSentimentService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/ClaudeSentimentService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/ComprehendConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/ProgressController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/ProgressServiceApplication.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/SecurityConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/SessionCompletedListener.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/WeakArea.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/java/com/careerpilot/progress/WeakAreaRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/progress-service/src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/AiService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/AnswerFeedbackService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/BedrockConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/BedrockService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/ClaudeService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/InterviewQuestion.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/InterviewQuestionRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/ProfileUpdatedListener.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/QuestionController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/QuestionGenerationService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/QuestionServiceApplication.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/java/com/careerpilot/question/SecurityConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/question-service/src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/AiDocumentService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/AwsConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/ClaudeDocumentService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/ResumeController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/ResumeService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/ResumeService2.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/ResumeServiceApplication.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/java/com/careerpilot/resume/SecurityConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/resume-service/src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/SecurityConfig.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/UserProfile.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/UserProfileController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/UserProfileRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/UserServiceApplication.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxEvent.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxPublisher.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/java/com/careerpilot/user/saga/ResumeParsedListener.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/user-service/src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docker-compose.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/architecture.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/angular.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/package-lock.json.old', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/app.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/app.config.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/app.routes.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/core/api.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/core/auth.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/core/practice-state.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/features/dashboard/dashboard.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/features/mock-interview/mock-interview.component.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/features/mock-interview/mock-interview.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/app/features/roadmap/roadmap.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/main.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/src/styles.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/tsconfig.app.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/careerpilot-ui/tsconfig.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'gitlog.tmp', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/build-backend.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/enable-signup.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/keycloak-setup.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/rebuild-gateway.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/rebuild-progress.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/rebuild-question.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/rebuild-resume.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/rebuild-user.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/run-services.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/verify.bat', LF will be replaced by CRLF the next time Git touches it
+[master (root-commit) cf6ae0b] CareerPilot: AI interview prep platform - microservices + Angular + Keycloak + Kafka
+ 89 files changed, 27567 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 README.md
+ create mode 100644 aws/bedrock-agent/README.md
+ create mode 100644 aws/bedrock-agent/action-group-schema.json
+ create mode 100644 aws/ecs/README.md
+ create mode 100644 aws/ecs/task-definition-example.json
+ create mode 100644 aws/keycloak-realm.json
+ create mode 100644 backend/api-gateway/pom.xml
+ create mode 100644 backend/api-gateway/src/main/java/com/careerpilot/gateway/ApiGatewayApplication.java
+ create mode 100644 backend/api-gateway/src/main/java/com/careerpilot/gateway/SecurityConfig.java
+ create mode 100644 backend/api-gateway/src/main/resources/application.yml
+ create mode 100644 backend/progress-service/pom.xml
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/AiSentimentService.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/ClaudeSentimentService.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/ComprehendConfig.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/ProgressController.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/ProgressServiceApplication.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/SecurityConfig.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/SessionCompletedListener.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/WeakArea.java
+ create mode 100644 backend/progress-service/src/main/java/com/careerpilot/progress/WeakAreaRepository.java
+ create mode 100644 backend/progress-service/src/main/resources/application.yml
+ create mode 100644 backend/question-service/pom.xml
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/AiService.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/AnswerFeedbackService.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/BedrockConfig.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/BedrockService.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/ClaudeService.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/InterviewQuestion.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/InterviewQuestionRepository.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/ProfileUpdatedListener.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/QuestionController.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/QuestionGenerationService.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/QuestionServiceApplication.java
+ create mode 100644 backend/question-service/src/main/java/com/careerpilot/question/SecurityConfig.java
+ create mode 100644 backend/question-service/src/main/resources/application.yml
+ create mode 100644 backend/resume-service/pom.xml
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/AiDocumentService.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/AwsConfig.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/ClaudeDocumentService.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/ResumeController.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/ResumeService.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/ResumeService2.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/ResumeServiceApplication.java
+ create mode 100644 backend/resume-service/src/main/java/com/careerpilot/resume/SecurityConfig.java
+ create mode 100644 backend/resume-service/src/main/resources/application.yml
+ create mode 100644 backend/user-service/pom.xml
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/SecurityConfig.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/UserProfile.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/UserProfileController.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/UserProfileRepository.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/UserServiceApplication.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxEvent.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxPublisher.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/saga/OutboxRepository.java
+ create mode 100644 backend/user-service/src/main/java/com/careerpilot/user/saga/ResumeParsedListener.java
+ create mode 100644 backend/user-service/src/main/resources/application.yml
+ create mode 100644 docker-compose.yml
+ create mode 100644 docs/architecture.md
+ create mode 100644 frontend/careerpilot-ui/angular.json
+ create mode 100644 frontend/careerpilot-ui/package-lock.json
+ create mode 100644 frontend/careerpilot-ui/package-lock.json.old
+ create mode 100644 frontend/careerpilot-ui/package.json
+ create mode 100644 frontend/careerpilot-ui/src/app/app.component.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/app.config.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/app.routes.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/core/api.service.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/core/auth.service.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/core/practice-state.service.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/features/dashboard/dashboard.component.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/features/mock-interview/mock-interview.component.html
+ create mode 100644 frontend/careerpilot-ui/src/app/features/mock-interview/mock-interview.component.ts
+ create mode 100644 frontend/careerpilot-ui/src/app/features/roadmap/roadmap.component.ts
+ create mode 100644 frontend/careerpilot-ui/src/index.html
+ create mode 100644 frontend/careerpilot-ui/src/main.ts
+ create mode 100644 frontend/careerpilot-ui/src/styles.css
+ create mode 100644 frontend/careerpilot-ui/tsconfig.app.json
+ create mode 100644 frontend/careerpilot-ui/tsconfig.json
+ create mode 100644 gitlog.tmp
+ create mode 100644 scripts/build-backend.bat
+ create mode 100644 scripts/enable-signup.bat
+ create mode 100644 scripts/keycloak-setup.bat
+ create mode 100644 scripts/rebuild-gateway.bat
+ create mode 100644 scripts/rebuild-progress.bat
+ create mode 100644 scripts/rebuild-question.bat
+ create mode 100644 scripts/rebuild-resume.bat
+ create mode 100644 scripts/rebuild-user.bat
+ create mode 100644 scripts/run-services.bat
+ create mode 100644 scripts/verify.bat
+cf6ae0b CareerPilot: AI interview prep platform - microservices + Angular + Keycloak + Kafka
+146 objects, 280 kilobytes

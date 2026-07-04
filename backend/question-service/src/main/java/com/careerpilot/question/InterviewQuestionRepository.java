@@ -8,4 +8,7 @@ public interface InterviewQuestionRepository extends MongoRepository<InterviewQu
 
     /** Practice history: only questions the user actually answered, newest first. */
     List<InterviewQuestion> findByUserIdAndAnsweredAtNotNullOrderByAnsweredAtDesc(String userId);
+
+    /** Question bank: everything generated for this user, newest first. */
+    List<InterviewQuestion> findByUserIdOrderByCreatedAtDesc(String userId);
 }

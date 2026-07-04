@@ -16,9 +16,21 @@ export class PracticeStateService {
   answer = '';
   feedback?: AnswerFeedback;
   loading = false;
+  jobDescription = '';
+
+  /** Per-question countdown deadline (epoch ms); survives navigation. */
+  deadlineMs = 0;
 
   get inProgress(): boolean {
     return this.questions.length > 0 && this.current < this.questions.length;
+  }
+
+  startTimer(seconds = 180): void {
+    this.deadlineMs = Date.now() + seconds * 1000;
+  }
+
+  get secondsLeft(): number {
+    return Math.max(0, Math.ceil((this.deadlineMs - Date.now()) / 1000));
   }
 
   reset(): void {
@@ -27,5 +39,6 @@ export class PracticeStateService {
     this.answer = '';
     this.feedback = undefined;
     this.loading = false;
+    this.deadlineMs = 0;
   }
 }

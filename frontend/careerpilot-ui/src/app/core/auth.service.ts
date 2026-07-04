@@ -35,8 +35,13 @@ export class AuthService {
               private zone: NgZone,
               private http: HttpClient) {}
 
+  loggedIn = false;
+
   /** Called once from AppComponent after Keycloak init. */
   async start(): Promise<void> {
+    this.loggedIn = await this.keycloak.isLoggedIn();
+    if (!this.loggedIn) return;   // anonymous visitor on the landing page
+
     const instance = this.keycloak.getKeycloakInstance();
     const token = instance.tokenParsed as Record<string, string> | undefined;
 
@@ -107,6 +112,14 @@ export class AuthService {
       .map(p => p.charAt(0).toUpperCase())
       .slice(0, 2)
       .join('') || 'U';
+  }
+
+  login(): void {
+    this.keycloak.login({ redirectUri: window.location.origin + '/dashboard' });
+  }
+
+  register(): void {
+    this.keycloak.register({ redirectUri: window.location.origin + '/dashboard' });
   }
 
   logout(): void {

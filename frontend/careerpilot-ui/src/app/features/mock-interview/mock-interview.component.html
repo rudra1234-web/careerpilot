@@ -5,7 +5,13 @@
 
   <!-- Session setup -->
   <div class="card" *ngIf="s.questions.length === 0">
-    <h3>New session</h3>
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <h3>New session</h3>
+      <span class="badge neutral" *ngIf="quotaRemaining !== null"
+            [class.warn]="quotaRemaining <= 5">
+        {{ quotaRemaining }} generations left today
+      </span>
+    </div>
     <p class="sub">Pick a topic; questions are tailored to your resume and target role
       ({{ targetRole }}).</p>
 
@@ -33,6 +39,99 @@
       Tip: upload your resume on the dashboard and your own skills appear here as practice topics.
     </p>
 
+    <!-- Optional: target a specific job description -->
+    <div class="field">
+      <button type="button" class="btn ghost" style="font-size:.85rem;padding:.45rem 1rem"
+              (click)="showJd = !showJd">
+        {{ showJd ? '− Hide' : '+ Target a job description' }}
+      </button>
+      <div *ngIf="showJd" style="margin-top:.75rem">
+        <textarea rows="5" [(ngModel)]="s.jobDescription"
+                  placeholder="Paste the job description here — questions will probe the gap between your resume and this role…"></textarea>
+      </div>
+    </div>
+
     <button class="btn" (click)="start()" [disabled]="s.loading">
       <span class="spinner" *ngIf="s.loading"></span>
-      {{ s.loading ? 'Generating questions…' : 'S
+      {{ s.loading ? 'Generating questions…' : 'Start ' + s.category + ' session' }}
+    </button>
+  </div>
+
+  <!-- Active question -->
+  <div class="card" *ngIf="s.inProgress">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="badge neutral">Question {{ s.current + 1 }} of {{ s.questions.length }} &middot; {{ s.category }}</span>
+      <span style="display:flex;align-items:center;gap:.75rem">
+        <span class="timer" *ngIf="!s.feedback"
+              [class.timer-low]="secondsLeft > 0 && secondsLeft <= 30"
+              [class.timer-up]="secondsLeft === 0">
+          &#9200; {{ secondsLeft === 0 ? "Time's up" : timerDisplay }}
+        </span>
+        <span class="badge" [class]="'badge ' + (s.questions[s.current].difficulty || 'medium').toLowerCase()">
+          {{ s.questions[s.current].difficulty }}
+        </span>
+        <button class="btn-logout" (click)="endSession()" title="Discard this session">End session</button>
+      </span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="(s.current / s.questions.length) * 100"></div>
+    </div>
+
+    <p class="question-text">{{ s.questions[s.current].question }}</p>
+
+    <div class="field" style="position:relative">
+      <textarea rows="8" [(ngModel)]="s.answer"
+                placeholder="Type your answer — or use the mic and answer out loud…"></textarea>
+      <button type="button" class="mic-btn" *ngIf="voiceSupported && !s.feedback"
+              [class.mic-on]="listening" (click)="toggleVoice()"
+              [title]="listening ? 'Stop dictation' : 'Answer by voice'">
+        {{ listening ? '🔴' : '🎙️' }}
+      </button>
+    </div>
+    <p class="sub" *ngIf="listening" style="font-size:.82rem;margin-top:-.75rem">
+      Listening&hellip; speak your answer, it will appear above.
+    </p>
+
+    <button class="btn" (click)="submit()" [disabled]="s.loading || !s.answer" *ngIf="!s.feedback">
+      <span class="spinner" *ngIf="s.loading"></span>
+      {{ s.loading ? 'Scoring…' : 'Get feedback' }}
+    </button>
+
+    <!-- Feedback -->
+    <div *ngIf="s.feedback" style="margin-top:1.75rem">
+      <div class="feedback-head">
+        <div class="score-ring"
+             [style.background]="s.feedback.score >= 7 ? 'var(--success)' : s.feedback.score >= 4 ? 'var(--warn)' : 'var(--danger)'">
+          {{ s.feedback.score }}
+        </div>
+        <div>
+          <h3 style="margin:0">{{ s.feedback.score >= 7 ? 'Strong answer' : s.feedback.score >= 4 ? 'Getting there' : 'Needs work' }}</h3>
+          <p class="sub" style="margin:0">Weak-area tag: {{ s.feedback.weakAreaTag }}</p>
+        </div>
+      </div>
+
+      <h4>&#9989; Strengths</h4>
+      <ul class="feedback-list"><li *ngFor="let st of s.feedback.strengths">{{ st }}</li></ul>
+
+      <h4>&#9888;&#65039; Gaps</h4>
+      <ul class="feedback-list"><li *ngFor="let g of s.feedback.gaps">{{ g }}</li></ul>
+
+      <h4>&#128161; Improved answer</h4>
+      <div class="improved">{{ s.feedback.improvedAnswer }}</div>
+
+      <button class="btn" (click)="next()" style="margin-top:1.5rem">Next question &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Session complete -->
+  <div class="card empty-state" *ngIf="s.questions.length > 0 && s.current >= s.questions.length">
+    <div class="icon">&#127942;</div>
+    <h3>Session complete</h3>
+    <p>Check your roadmap for the agent's updated plan.</p>
+    <div style="display:flex;gap:.75rem;justify-content:center;margin-top:.75rem">
+      <a routerLink="/roadmap" class="btn">View roadmap</a>
+      <button class="btn ghost" (click)="endSession()">New session</button>
+    </div>
+  </div>
+</section>

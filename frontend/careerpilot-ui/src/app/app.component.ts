@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from './core/auth.service';
+import { ToastService } from './core/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +15,13 @@ import { AuthService } from './core/auth.service';
           <span class="brand-mark">CP</span>
           CareerPilot
         </a>
-        <div class="nav-links">
-          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+        <div class="nav-links" *ngIf="auth.loggedIn">
+          <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
           <a routerLink="/practice" routerLinkActive="active">Practice</a>
+          <a routerLink="/bank" routerLinkActive="active">Questions</a>
           <a routerLink="/roadmap" routerLinkActive="active">Roadmap</a>
         </div>
-        <div class="user-menu">
+        <div class="user-menu" *ngIf="auth.loggedIn">
           <button class="btn-icon" (click)="toggleTheme()"
                   [title]="dark ? 'Switch to light mode' : 'Switch to dark mode'">
             {{ dark ? '☀️' : '🌙' }}
@@ -33,6 +35,14 @@ import { AuthService } from './core/auth.service';
           </div>
           <button class="btn-logout" (click)="auth.logout()" title="Sign out">Logout</button>
         </div>
+        <div class="user-menu" *ngIf="!auth.loggedIn" style="border-left:none">
+          <button class="btn-icon" (click)="toggleTheme()"
+                  [title]="dark ? 'Switch to light mode' : 'Switch to dark mode'">
+            {{ dark ? '☀️' : '🌙' }}
+          </button>
+          <button class="btn ghost" (click)="auth.login()">Sign in</button>
+          <button class="btn" (click)="auth.register()">Get started</button>
+        </div>
       </div>
     </nav>
 
@@ -43,6 +53,19 @@ import { AuthService } from './core/auth.service';
     <footer class="footer">
       CareerPilot &mdash; AI-powered interview preparation &middot; &copy; 2026 CareerPilot
     </footer>
+
+    <!-- App notifications -->
+    <div class="toast-stack">
+      <div class="toast mini" *ngFor="let t of toast.toasts"
+           [class.toast-error]="t.type === 'error'"
+           [class.toast-success]="t.type === 'success'">
+        <div class="toast-body">
+          <strong>{{ t.title }}</strong>
+          <p>{{ t.message }}</p>
+        </div>
+        <button class="btn-icon" (click)="toast.dismiss(t.id)">&#10005;</button>
+      </div>
+    </div>
 
     <!-- Session-expiry warning toast -->
     <div class="toast" *ngIf="auth.showExpiryWarning">
@@ -61,7 +84,7 @@ import { AuthService } from './core/auth.service';
 export class AppComponent implements OnInit {
   dark = false;
 
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, public toast: ToastService) {}
 
   ngOnInit(): void {
     this.auth.start();
