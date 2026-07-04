@@ -1,0 +1,7 @@
+[master f9490be] Add brand logo (ascending paper plane) to navbar, landing hero and favicon
+ 7 files changed, 74 insertions(+), 1 deletion(-)
+ create mode 100644 frontend/careerpilot-ui/src/favicon.svg
+ create mode 100644 gitlog2.tmp
+f9490be Add brand logo (ascending paper plane) to navbar, landing hero and favicon
+96c184e Add question bank, analytics, JD targeting, timer+voice, onboarding, rate limiting, landing page, Dockerfiles
+cf6ae0b CareerPilot: AI interview prep platform - microservices + Angular + Keycloak + Kafka
