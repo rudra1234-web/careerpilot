@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { ToastService } from '../../core/toast.service';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="hero">
       <span class="eyebrow">AI-powered interview prep</span>
@@ -134,7 +135,7 @@ export class DashboardComponent implements OnInit {
   prefCompany = 'product';
 
   constructor(private api: ApiService, public auth: AuthService,
-              private toast: ToastService) {}
+              private toast: ToastService, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.api.myProfile().subscribe({
@@ -145,12 +146,15 @@ export class DashboardComponent implements OnInit {
           this.fromSavedProfile = true;
         }
         this.showOnboarding = !p.targetRole;
+        this.cd.markForCheck();
       },
-      error: () => { this.skillsLoading = false; this.showOnboarding = true; },
+      error: () => { this.skillsLoading = false; this.showOnboarding = true; this.cd.markForCheck(); },
     });
-    this.api.history(this.auth.userId).subscribe({
-      next: h => { this.answered = h; this.statsLoading = false; },
-      error: () => { this.statsLoading = false; },
+    // Recent form (last 50 answers) is enough for the stat cards - no need
+    // to download a user's entire history.
+    this.api.history(this.auth.userId, 0, 50).subscribe({
+      next: p => { this.answered = p.content; this.statsLoading = false; this.cd.markForCheck(); },
+      error: () => { this.statsLoading = false; this.cd.markForCheck(); },
     });
   }
 
@@ -194,6 +198,7 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.showOnboarding = false;
         this.toast.success('Saved', 'Your questions will now target ' + this.prefRole + '.');
+        this.cd.markForCheck();
       },
       error: err => this.toast.httpError(err, 'Could not save preferences.'),
     });
@@ -209,10 +214,12 @@ export class DashboardComponent implements OnInit {
         this.fromSavedProfile = false;
         this.uploading = false;
         this.toast.success('Resume analyzed', this.skills.length + ' skills detected and saved to your profile.');
+        this.cd.markForCheck();
       },
       error: err => {
         this.uploading = false;
         this.toast.httpError(err, 'Resume upload failed. Is the backend running?');
+        this.cd.markForCheck();
       },
     });
   }

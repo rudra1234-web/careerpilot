@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AnsweredQuestion, ApiService, WeakArea } from '../../core/api.service';
@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth.service';
   selector: 'app-roadmap',
   standalone: true,
   imports: [CommonModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Your prep roadmap</h2>
     <p class="sub" style="margin-bottom:1.5rem">
@@ -31,10 +32,10 @@ import { AuthService } from '../../core/auth.service';
         </div>
       </div>
 
-      <div class="pager" *ngIf="totalPages > 1">
-        <button class="btn ghost" (click)="page = page - 1" [disabled]="page === 0">&larr; Previous</button>
-        <span>Page {{ page + 1 }} of {{ totalPages }}</span>
-        <button class="btn ghost" (click)="page = page + 1" [disabled]="page >= totalPages - 1">Next &rarr;</button>
+      <div class="pager" *ngIf="totalAreaPages > 1">
+        <button class="btn ghost" (click)="areaPage = areaPage - 1" [disabled]="areaPage === 0">&larr; Previous</button>
+        <span>Page {{ areaPage + 1 }} of {{ totalAreaPages }}</span>
+        <button class="btn ghost" (click)="areaPage = areaPage + 1" [disabled]="areaPage >= totalAreaPages - 1">Next &rarr;</button>
       </div>
     </div>
 
@@ -45,14 +46,14 @@ import { AuthService } from '../../core/auth.service';
       <a routerLink="/practice" class="btn" style="margin-top:.75rem">Start practicing</a>
     </div>
 
-    <!-- ===== Practice history: revisit every Q&A with AI feedback ===== -->
-    <div *ngIf="history.length" style="margin-top:2.5rem">
+    <!-- ===== Practice history: server-paged Q&A review ===== -->
+    <div *ngIf="history.length || historyTotalPages > 0" style="margin-top:2.5rem">
       <h2>Practice history</h2>
       <p class="sub" style="margin-bottom:1.5rem">
         Every question you've answered, with your answer and the AI's full feedback.
       </p>
 
-      <details class="history-item" *ngFor="let h of pagedHistory">
+      <details class="history-item" *ngFor="let h of history">
         <summary>
           <span class="history-score"
                 [style.background]="h.score >= 7 ? 'var(--success)' : h.score >= 4 ? 'var(--warn)' : 'var(--danger)'">
@@ -81,51 +82,54 @@ import { AuthService } from '../../core/auth.service';
         </div>
       </details>
 
-      <div class="pager" *ngIf="totalHistoryPages > 1">
-        <button class="btn ghost" (click)="historyPage = historyPage - 1" [disabled]="historyPage === 0">&larr; Previous</button>
-        <span>Page {{ historyPage + 1 }} of {{ totalHistoryPages }}</span>
-        <button class="btn ghost" (click)="historyPage = historyPage + 1" [disabled]="historyPage >= totalHistoryPages - 1">Next &rarr;</button>
+      <div class="pager" *ngIf="historyTotalPages > 1">
+        <button class="btn ghost" (click)="loadHistory(historyPage - 1)" [disabled]="historyPage === 0">&larr; Previous</button>
+        <span>Page {{ historyPage + 1 }} of {{ historyTotalPages }}</span>
+        <button class="btn ghost" (click)="loadHistory(historyPage + 1)" [disabled]="historyPage >= historyTotalPages - 1">Next &rarr;</button>
       </div>
     </div>
   `,
 })
 export class RoadmapComponent implements OnInit {
-  private static readonly PAGE_SIZE = 8;
-  private static readonly HISTORY_PAGE_SIZE = 5;
+  private static readonly AREA_PAGE_SIZE = 8;
 
   areas: WeakArea[] = [];
-  history: AnsweredQuestion[] = [];
-  page = 0;
-  historyPage = 0;
+  areaPage = 0;
 
-  constructor(private api: ApiService, private auth: AuthService) {}
+  history: AnsweredQuestion[] = [];
+  historyPage = 0;
+  historyTotalPages = 0;
+
+  constructor(private api: ApiService,
+              private auth: AuthService,
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.api.weakAreas(this.auth.userId).subscribe({
-      next: a => this.areas = a,
-      error: () => this.areas = [],
+      next: a => { this.areas = a; this.cd.markForCheck(); },
+      error: () => { this.areas = []; this.cd.markForCheck(); },
     });
-    this.api.history(this.auth.userId).subscribe({
-      next: h => this.history = h,
-      error: () => this.history = [],
+    this.loadHistory(0);
+  }
+
+  loadHistory(page: number): void {
+    this.api.history(this.auth.userId, page, 5).subscribe({
+      next: p => {
+        this.history = p.content;
+        this.historyPage = p.number;
+        this.historyTotalPages = p.totalPages;
+        this.cd.markForCheck();
+      },
+      error: () => { this.history = []; this.cd.markForCheck(); },
     });
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.areas.length / RoadmapComponent.PAGE_SIZE);
+  get totalAreaPages(): number {
+    return Math.ceil(this.areas.length / RoadmapComponent.AREA_PAGE_SIZE);
   }
 
   get pagedAreas(): WeakArea[] {
-    const start = this.page * RoadmapComponent.PAGE_SIZE;
-    return this.areas.slice(start, start + RoadmapComponent.PAGE_SIZE);
-  }
-
-  get totalHistoryPages(): number {
-    return Math.ceil(this.history.length / RoadmapComponent.HISTORY_PAGE_SIZE);
-  }
-
-  get pagedHistory(): AnsweredQuestion[] {
-    const start = this.historyPage * RoadmapComponent.HISTORY_PAGE_SIZE;
-    return this.history.slice(start, start + RoadmapComponent.HISTORY_PAGE_SIZE);
+    const start = this.areaPage * RoadmapComponent.AREA_PAGE_SIZE;
+    return this.areas.slice(start, start + RoadmapComponent.AREA_PAGE_SIZE);
   }
 }

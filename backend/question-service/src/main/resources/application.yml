@@ -3,14 +3,23 @@ server:
 spring:
   application:
     name: question-service
+  # Virtual threads: every request runs on a JDK virtual thread, so slow
+  # blocking AI calls no longer pin one of ~200 platform threads each.
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    mongodb:
+      uri: mongodb://localhost:27017/careerpilot
+      auto-index-creation: true   # create the @CompoundIndex definitions at startup
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8180/realms/careerpilot
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/careerpilot
   kafka:
     bootstrap-servers: localhost:9092
     producer:

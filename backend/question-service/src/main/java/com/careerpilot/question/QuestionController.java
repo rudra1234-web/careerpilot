@@ -1,6 +1,9 @@
 package com.careerpilot.question;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -39,16 +42,25 @@ public class QuestionController {
         return repository.findByUserIdAndCategory(userId, category);
     }
 
-    /** Practice history: every answered question with the user's answer + AI feedback. */
+    /**
+     * Practice history (server-side pagination): answered questions, newest
+     * first. Paged responses keep payloads O(page) instead of O(user history).
+     */
     @GetMapping("/history")
-    public List<InterviewQuestion> history(@RequestParam String userId) {
-        return repository.findByUserIdAndAnsweredAtNotNullOrderByAnsweredAtDesc(userId);
+    public Page<InterviewQuestion> history(@RequestParam String userId,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "5") int size) {
+        return repository.findByUserIdAndAnsweredAtNotNull(userId,
+                PageRequest.of(page, Math.min(size, 50), Sort.by(Sort.Direction.DESC, "answeredAt")));
     }
 
-    /** Question bank: everything ever generated for this user, newest first. */
+    /** Question bank (server-side pagination): everything generated, newest first. */
     @GetMapping("/bank")
-    public List<InterviewQuestion> bank(@RequestParam String userId) {
-        return repository.findByUserIdOrderByCreatedAtDesc(userId);
+    public Page<InterviewQuestion> bank(@RequestParam String userId,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "8") int size) {
+        return repository.findByUserId(userId,
+                PageRequest.of(page, Math.min(size, 50), Sort.by(Sort.Direction.DESC, "createdAt")));
     }
 
     /** Remaining generation quota for today (for the UI). */

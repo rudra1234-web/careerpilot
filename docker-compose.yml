@@ -36,6 +36,11 @@ services:
     image: openzipkin/zipkin:3
     ports: ["9411:9411"]
 
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
 volumes:
   pgdata:
   mongodata:

@@ -56,9 +56,10 @@ export class ApiService {
     return this.http.get<WeakArea[]>(`${this.base}/progress/${userId}/weak-areas`);
   }
 
-  /** Every answered question with answer + feedback, newest first. */
-  history(userId: string): Observable<AnsweredQuestion[]> {
-    return this.http.get<AnsweredQuestion[]>(`${this.base}/questions/history?userId=${userId}`);
+  /** Every answered question with answer + feedback, newest first (paged). */
+  history(userId: string, page = 0, size = 5): Observable<PageResp<AnsweredQuestion>> {
+    return this.http.get<PageResp<AnsweredQuestion>>(
+      `${this.base}/questions/history?userId=${userId}&page=${page}&size=${size}`);
   }
 
   uploadResume(userId: string, file: File): Observable<any> {
@@ -79,9 +80,10 @@ export class ApiService {
     return this.http.patch<UserProfile>(`${this.base}/users/me/preferences`, prefs);
   }
 
-  /** Every question ever generated for this user, newest first. */
-  bank(userId: string): Observable<AnsweredQuestion[]> {
-    return this.http.get<AnsweredQuestion[]>(`${this.base}/questions/bank?userId=${userId}`);
+  /** Every question ever generated for this user, newest first (paged). */
+  bank(userId: string, page = 0, size = 8): Observable<PageResp<AnsweredQuestion>> {
+    return this.http.get<PageResp<AnsweredQuestion>>(
+      `${this.base}/questions/bank?userId=${userId}&page=${page}&size=${size}`);
   }
 
   /** Remaining daily generation quota. */
@@ -89,6 +91,14 @@ export class ApiService {
     return this.http.get<{ limit: number; used: number; remaining: number }>(
       `${this.base}/questions/quota?userId=${userId}`);
   }
+}
+
+/** Spring Data page envelope. */
+export interface PageResp<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  number: number;   // current page index
 }
 
 export interface UserProfile {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth.service';
   selector: 'app-landing',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="hero" style="text-align:center;padding:4rem 2rem">
       <div class="logo-hero">
