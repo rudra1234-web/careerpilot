@@ -15,7 +15,12 @@ import { AuthService } from '../../core/auth.service';
       Weakest areas first — the agent re-prioritizes this after every practice session.
     </p>
 
-    <div class="card" *ngIf="areas.length">
+    <!-- Loading skeleton: never flash the empty state while data is in flight -->
+    <div *ngIf="areasLoading">
+      <div class="skeleton" style="height:64px;margin-bottom:.9rem" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <div class="card" *ngIf="!areasLoading && areas.length">
       <div class="area-row" *ngFor="let a of pagedAreas">
         <div class="area-name">
           {{ a.tag }}
@@ -39,7 +44,7 @@ import { AuthService } from '../../core/auth.service';
       </div>
     </div>
 
-    <div class="card empty-state" *ngIf="!areas.length">
+    <div class="card empty-state" *ngIf="!areasLoading && !areas.length">
       <div class="icon">&#128506;</div>
       <h3>No data yet</h3>
       <p>Complete a practice session and your personalized roadmap will appear here.</p>
@@ -47,7 +52,13 @@ import { AuthService } from '../../core/auth.service';
     </div>
 
     <!-- ===== Practice history: server-paged Q&A review ===== -->
-    <div *ngIf="history.length || historyTotalPages > 0" style="margin-top:2.5rem">
+    <div *ngIf="historyLoading" style="margin-top:2.5rem">
+      <h2>Practice history</h2>
+      <div class="skeleton" style="height:64px;margin:1.25rem 0 .9rem"></div>
+      <div class="skeleton" style="height:64px"></div>
+    </div>
+
+    <div *ngIf="!historyLoading && (history.length || historyTotalPages > 0)" style="margin-top:2.5rem">
       <h2>Practice history</h2>
       <p class="sub" style="margin-bottom:1.5rem">
         Every question you've answered, with your answer and the AI's full feedback.
@@ -95,10 +106,12 @@ export class RoadmapComponent implements OnInit {
 
   areas: WeakArea[] = [];
   areaPage = 0;
+  areasLoading = true;
 
   history: AnsweredQuestion[] = [];
   historyPage = 0;
   historyTotalPages = 0;
+  historyLoading = true;
 
   constructor(private api: ApiService,
               private auth: AuthService,
@@ -106,21 +119,23 @@ export class RoadmapComponent implements OnInit {
 
   ngOnInit(): void {
     this.api.weakAreas(this.auth.userId).subscribe({
-      next: a => { this.areas = a; this.cd.markForCheck(); },
-      error: () => { this.areas = []; this.cd.markForCheck(); },
+      next: a => { this.areas = a; this.areasLoading = false; this.cd.markForCheck(); },
+      error: () => { this.areas = []; this.areasLoading = false; this.cd.markForCheck(); },
     });
     this.loadHistory(0);
   }
 
   loadHistory(page: number): void {
+    this.historyLoading = true;
     this.api.history(this.auth.userId, page, 5).subscribe({
       next: p => {
         this.history = p.content;
         this.historyPage = p.number;
         this.historyTotalPages = p.totalPages;
+        this.historyLoading = false;
         this.cd.markForCheck();
       },
-      error: () => { this.history = []; this.cd.markForCheck(); },
+      error: () => { this.history = []; this.historyLoading = false; this.cd.markForCheck(); },
     });
   }
 

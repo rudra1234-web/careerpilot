@@ -1,0 +1,8 @@
+[master 97b13ff] Scale pass: virtual threads, Redis-backed rate limiting, Mongo compound indexes, Hikari pool tuning, server-side pagination, lazy routes, OnPush change detection
+ 20 files changed, 363 insertions(+), 136 deletions(-)
+ create mode 100644 RUNBOOK.md
+ create mode 100644 gitlog4.tmp
+ create mode 100644 scripts/stop-services.bat
+97b13ff Scale pass: virtual threads, Redis-backed rate limiting, Mongo compound indexes, Hikari pool tuning, server-side pagination, lazy routes, OnPush change detection
+0db7b3f UI polish: layered backgrounds, elevation system, gradient buttons, hero depth, entrance motion, a11y focus states
+f9490be Add brand logo (ascending paper plane) to navbar, landing hero and favicon
