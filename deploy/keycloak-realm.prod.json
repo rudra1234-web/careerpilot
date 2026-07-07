@@ -1,0 +1,32 @@
+{
+  "realm": "careerpilot",
+  "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "sslRequired": "external",
+  "clients": [
+    {
+      "clientId": "careerpilot-ui",
+      "name": "CareerPilot UI",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["__PUBLIC_URL__/*"],
+      "webOrigins": ["__PUBLIC_URL__"]
+    }
+  ],
+  "users": [
+    {
+      "username": "demo",
+      "enabled": true,
+      "email": "demo@careerpilot.local",
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "User",
+      "credentials": [
+        { "type": "password", "value": "demo123", "temporary": false }
+      ]
+    }
+  ]
+}

@@ -55,7 +55,12 @@ export class AuthService {
       token?.['name'] || token?.['given_name'] || this.username;
 
     // Persist/refresh the profile row in user-service (name from signup).
-    this.http.post<{ fullName?: string }>('http://localhost:8080/api/users/sync', {})
+    // Same-origin in prod; absolute local gateway URL only during `ng serve` on :4200.
+    const syncUrl =
+      window.location.port === '4200'
+        ? 'http://localhost:8080/api/users/sync'
+        : '/api/users/sync';
+    this.http.post<{ fullName?: string }>(syncUrl, {})
       .subscribe({
         next: p => { if (p?.fullName) this.displayName = p.fullName; },
         error: () => { /* backend down: token name is still shown */ },

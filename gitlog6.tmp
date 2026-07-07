@@ -1,0 +1,5 @@
+[master 0a84085] Roadmap UX: loading skeletons; never flash empty state while data is in flight
+ 2 files changed, 29 insertions(+), 6 deletions(-)
+ create mode 100644 gitlog5.tmp
+0a84085 Roadmap UX: loading skeletons; never flash empty state while data is in flight
+97b13ff Scale pass: virtual threads, Redis-backed rate limiting, Mongo compound indexes, Hikari pool tuning, server-side pagination, lazy routes, OnPush change detection

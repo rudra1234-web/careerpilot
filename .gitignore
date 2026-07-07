@@ -14,7 +14,7 @@ resume-uploads/
 claude-*.bat
 *.txt
 !frontend/careerpilot-ui/src/**/*.txt
-rsp*.tmp
+*.tmp
 TestPg.java
 
 # IDE

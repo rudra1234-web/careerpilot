@@ -18,7 +18,17 @@ spring:
       connection-timeout: 5000
   jpa:
     hibernate:
-      ddl-auto: update
+      # 'none': schema already exists; with 'update' Hibernate must reach the
+      # DB during startup and the service dies if Postgres is still booting.
+      ddl-auto: none
+    # Pin the dialect so Hibernate does NOT need a live DB connection at
+    # startup; the service now boots even if Postgres is still coming up
+    # and connects once it is available (instead of dying at boot).
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        boot:
+          allow_jdbc_metadata_access: false
   security:
     oauth2:
       resourceserver:

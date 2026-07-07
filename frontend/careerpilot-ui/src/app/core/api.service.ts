@@ -37,7 +37,10 @@ export interface WeakArea {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = 'http://localhost:8080/api';
+  // Same-origin in production (reverse proxy forwards /api to the gateway);
+  // falls back to the local gateway port when running `ng serve` on :4200.
+  private base =
+    window.location.port === '4200' ? 'http://localhost:8080/api' : '/api';
 
   constructor(private http: HttpClient) {}
 

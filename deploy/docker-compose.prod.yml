@@ -1,0 +1,194 @@
+# =====================================================================
+# CareerPilot — production stack for a single always-free VM.
+# Runs EVERY component: 5 Spring Boot services, Postgres, Mongo, Kafka,
+# Keycloak, Redis, Zipkin, the Angular UI, and a Caddy HTTPS proxy.
+#
+# Only Caddy is exposed publicly (80/443). Everything else talks over the
+# internal Docker network by service name.
+#
+# Bring up:   docker compose --env-file .env -f docker-compose.prod.yml up -d --build
+# =====================================================================
+services:
+
+  # ---------------- Public edge (TLS + routing) ----------------
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [frontend, api-gateway, keycloak]
+
+  # ---------------- Frontend ----------------
+  frontend:
+    build:
+      context: ../frontend/careerpilot-ui
+      dockerfile: ../../deploy/frontend.Dockerfile
+    restart: unless-stopped
+    expose: ["80"]
+
+  # ---------------- Infrastructure ----------------
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: careerpilot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-careerpilot}
+      POSTGRES_DB: careerpilot
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U careerpilot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes: [mongodata:/data/db]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  kafka:
+    image: bitnamilegacy/kafka:3.7
+    restart: unless-stopped
+    environment:
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    volumes: [kafkadata:/bitnami/kafka]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    restart: unless-stopped
+    command:
+      - start-dev
+      - --import-realm
+      - --http-relative-path=/auth
+      - --hostname-url=https://${PUBLIC_HOST}/auth
+      - --hostname-admin-url=https://${PUBLIC_HOST}/auth
+      - --proxy=edge
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    volumes:
+      # generated from keycloak-realm.prod.json by setup.sh (fills in the domain)
+      - ./keycloak-import:/opt/keycloak/data/import:ro
+
+  # ---------------- Application services ----------------
+  api-gateway:
+    build:
+      context: ../backend/api-gateway
+      dockerfile: ../../deploy/Dockerfile.service
+    restart: unless-stopped
+    expose: ["8080"]
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://user-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://question-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://resume-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://progress-service:8080
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on: [keycloak, user-service, question-service, resume-service, progress-service]
+
+  user-service:
+    build:
+      context: ../backend/user-service
+      dockerfile: ../../deploy/Dockerfile.service
+    restart: unless-stopped
+    expose: ["8080"]
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/careerpilot
+      SPRING_DATASOURCE_USERNAME: careerpilot
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-careerpilot}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      postgres: { condition: service_healthy }
+      kafka: { condition: service_started }
+      keycloak: { condition: service_started }
+
+  question-service:
+    build:
+      context: ../backend/question-service
+      dockerfile: ../../deploy/Dockerfile.service
+    restart: unless-stopped
+    expose: ["8080"]
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/careerpilot
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      mongo: { condition: service_healthy }
+      kafka: { condition: service_started }
+      keycloak: { condition: service_started }
+
+  resume-service:
+    build:
+      context: ../backend/resume-service
+      dockerfile: ../../deploy/Dockerfile.service
+    restart: unless-stopped
+    expose: ["8080"]
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      RESUME_STORAGE_DIR: /data/resumes
+    volumes: [resumedata:/data/resumes]
+    depends_on:
+      kafka: { condition: service_started }
+      keycloak: { condition: service_started }
+
+  progress-service:
+    build:
+      context: ../backend/progress-service
+      dockerfile: ../../deploy/Dockerfile.service
+    restart: unless-stopped
+    expose: ["8080"]
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/careerpilot
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${PUBLIC_HOST}/auth/realms/careerpilot
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      mongo: { condition: service_healthy }
+      kafka: { condition: service_started }
+      keycloak: { condition: service_started }
+
+volumes:
+  pgdata:
+  mongodata:
+  kafkadata:
+  resumedata:
+  caddy_data:
+  caddy_config:

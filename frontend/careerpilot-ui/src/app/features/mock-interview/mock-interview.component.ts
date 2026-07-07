@@ -59,7 +59,13 @@ export class MockInterviewComponent implements OnInit, OnDestroy {
             .filter(sk => sk.length > 0).slice(0, 15);
         }
       },
-      error: () => { /* core categories still work */ },
+      error: err => {
+        // Do NOT fail silently: the user needs to know their resume skills
+        // are unavailable, otherwise it looks like their data was lost.
+        this.toast.error('Profile unavailable',
+          'Could not load your resume skills (' + (err?.status || 'no connection') +
+          '). Default topics only for now — is user-service running?');
+      },
     });
     this.api.quota(this.userId).subscribe({
       next: q => this.quotaRemaining = q.remaining,

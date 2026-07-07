@@ -1,0 +1,28 @@
+# =====================================================================
+# Single public entrypoint. Caddy terminates TLS (automatic Let's Encrypt)
+# and routes everything under ONE domain, so the browser only ever talks
+# to one origin -> no CORS to configure.
+#
+#   /api/*   -> api-gateway  (paths preserved: gateway matches /api/**)
+#   /auth/*  -> keycloak     (Keycloak runs with http-relative-path=/auth)
+#   /*       -> frontend     (Angular static site)
+#
+# PUBLIC_HOST comes from the environment (.env). Use a real domain, or the
+# free wildcard-DNS trick <YOUR_PUBLIC_IP>.sslip.io which resolves to your IP
+# and still gets a valid certificate.
+# =====================================================================
+{$PUBLIC_HOST} {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy api-gateway:8080
+	}
+
+	handle /auth/* {
+		reverse_proxy keycloak:8080
+	}
+
+	handle {
+		reverse_proxy frontend:80
+	}
+}

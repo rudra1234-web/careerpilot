@@ -10,7 +10,12 @@ function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
     keycloak.init({
       config: {
-        url: 'http://localhost:8180',
+        // Same-origin in production (served behind the reverse proxy at /auth);
+        // falls back to the local Keycloak dev port when running `ng serve` on :4200.
+        url:
+          window.location.port === '4200'
+            ? 'http://localhost:8180'
+            : `${window.location.origin}/auth`,
         realm: 'careerpilot',
         clientId: 'careerpilot-ui',
       },
