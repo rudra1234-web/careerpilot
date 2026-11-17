@@ -18,7 +18,8 @@ jobs:
           fetch-depth: 0  # Important for commit history analysis
 
       - name: Run AI Code Review
-        uses: zxcloli666/ai-code-review@v1.7.7
+        uses: zxcloli666/AI-Code-Review@v1.3.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_BASE_URL: 'https://api.anthropic.com/v1'
+          OPENAI_API_MODEL: 'claude-opus-4'
