@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0  # Important for commit history analysis
 
       - name: Run AI Code Review
-        uses: zxcloli666/AI-Code-Review@v1
+        uses: zxcloli666/ai-code-review@v1.7.7
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
