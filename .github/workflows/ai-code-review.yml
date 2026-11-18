@@ -17,10 +17,50 @@ jobs:
         with:
           fetch-depth: 0  # Important for commit history analysis
 
+      - name: Start Local Proxy to Strip Temperature
+        run: |
+          cat << 'EOF' > /tmp/strip_temp_proxy.py
+          import http.server, socketserver, urllib.request, urllib.error, json
+
+          class Proxy(http.server.BaseHTTPRequestHandler):
+              def do_POST(self):
+                  length = int(self.headers.get('Content-Length', 0))
+                  body = self.rfile.read(length)
+                  try:
+                      data = json.loads(body)
+                      data.pop('temperature', None)
+                      body = json.dumps(data).encode('utf-8')
+                  except Exception:
+                      pass
+
+                  headers = {k: v for k, v in self.headers.items() if k.lower() not in ('host', 'content-length')}
+                  req = urllib.request.Request(f"https://anthropic.com{self.path}", data=body, headers=headers, method='POST')
+                  
+                  try:
+                      with urllib.request.urlopen(req) as resp:
+                          self.send_response(resp.status)
+                          for k, v in resp.getheaders():
+                              if k.lower() not in ('transfer-encoding', 'connection'):
+                                  self.send_header(k, v)
+                          self.end_headers()
+                          self.wfile.write(resp.read())
+                  except urllib.error.HTTPError as e:
+                      self.send_response(e.code)
+                      self.end_headers()
+                      self.wfile.write(e.read())
+
+              def log_message(self, format, *args):
+                  pass
+
+          socketserver.TCPServer(("127.0.0.1", 8080), Proxy).serve_forever()
+          EOF
+          python3 /tmp/strip_temp_proxy.py &
+          sleep 2
+
       - name: Run AI Code Review
         uses: zxcloli666/AI-Code-Review@v1.3.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          OPENAI_API_BASE_URL: 'https://api.anthropic.com/v1'
+          OPENAI_API_BASE_URL: 'http://127.0.0.1:8080'
           OPENAI_API_MODEL: 'claude-opus-5-5'
