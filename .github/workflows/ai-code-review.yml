@@ -1,16 +1,24 @@
-name: AI Code Review
+name: AI Reviewer
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, master, develop]
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   ai-review:
+    if: >
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
-      issues: write
 
     steps:
       - name: Checkout code
@@ -24,19 +32,77 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
-            Review this pull request in ${{ github.repository }}.
+            You are a senior staff engineer doing a merge-gate code review.
+            Repo: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
+            Base branch: ${{ github.base_ref }}
 
-            Focus on:
-            - Bugs and logic errors
-            - Security issues
-            - Performance problems
-            - Code quality and readability
-            - Missing tests or error handling
+            SCOPE
+            Review ALL changes between origin/${{ github.base_ref }} and
+            HEAD. Use `gh pr diff` and `git diff
+            origin/${{ github.base_ref }}...HEAD --stat` to list every
+            changed file, then read each changed file fully for context.
+            Detect each file's language and apply that language's idioms
+            and best practices (Java, Kotlin, TypeScript/JavaScript,
+            Angular, React, Python, Go, SQL, YAML, Dockerfile, etc.).
+            Do not skip any file. Ignore generated and lock files.
 
-            Post inline comments for specific issues and one summary
-            comment. Be concise and skip trivial style nitpicks.
+            REVIEW CHECKLIST
+            1. Correctness: bugs, logic errors, null/undefined handling,
+               off-by-one, race conditions, resource leaks, wrong
+               exception handling, backward compatibility.
+            2. Security (Sonar vulnerabilities and hotspots, OWASP Top 10):
+               SQL/NoSQL/command injection, XSS, CSRF, SSRF, path
+               traversal, insecure deserialization, hardcoded secrets or
+               credentials, weak crypto or random, missing authN/authZ,
+               sensitive data in logs, insecure CORS, vulnerable or
+               outdated dependencies.
+            3. Sonar-style code quality: code smells, cognitive
+               complexity, duplicated code, long methods or classes,
+               dead code, unused imports or variables, magic numbers,
+               empty catch blocks, swallowed exceptions, naming issues,
+               deep nesting, overly broad exception catching.
+            4. Best practices: SOLID, DRY, clean code, proper layering,
+               immutability, dependency injection, logging
+               conventions, API design, DB performance (N+1 queries,
+               missing indexes, unbounded queries), thread safety,
+               performance in hot paths.
+            5. Testing:
+               - Does every new or changed behavior have tests?
+               - JUnit 5 and Mockito quality: meaningful assertions,
+                 no assertion-free tests, correct mocking, no
+                 over-mocking, @ParameterizedTest where useful,
+                 independent and deterministic tests, no Thread.sleep,
+                 clear naming (given_when_then).
+               - Edge cases, negative paths, and exception scenarios
+                 covered.
+               - For frontend: Jest/Jasmine/React Testing Library
+                 equivalents.
+               - Flag untested risky code and estimate coverage gaps.
+            6. Maintainability: readability, comments explaining why not
+               what, documentation and README updates, config and
+               migration changes, breaking changes.
+
+            OUTPUT RULES
+            - Post inline comments on exact lines for specific issues.
+              Each must include: severity, the problem, why it matters,
+              and a concrete fix or code suggestion.
+            - Severity labels: 🔴 Blocker, 🟠 Major, 🟡 Minor, 🔵 Suggestion.
+            - Finally post ONE summary comment with `gh pr comment`:
+              ## Verdict: ✅ Approve / ⚠️ Approve with comments /
+              ❌ Request changes
+              ### Summary of changes
+              ### 🔒 Security findings
+              ### 🐞 Bugs and logic issues
+              ### 🧹 Code quality (Sonar-style)
+              ### 🧪 Testing review (JUnit and coverage gaps)
+              ### 👍 What was done well
+              ### Merge checklist
+            - Only report issues you can verify in the code. Do not
+              invent problems. If unsure, say so. Do not nitpick
+              formatting that a linter would catch.
+            - If a section has no findings, write "None found".
           claude_args: |
             --model claude-sonnet-5-5
-            --max-turns 8
-            --allowedTools "mcp_github_inline_comment_create_inline_comment,Bash(gh pr comment:),Bash(gh pr diff:),Bash(gh pr view:*)"
+            --max-turns 25
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Read,Glob,Grep,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
